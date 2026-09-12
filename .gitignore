@@ -1,0 +1,38 @@
+# CMake / Build
+build/
+build-*/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# Object files and binaries
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+*.app
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Yocto / Bitbake (if built locally)
+tmp/
+sstate-cache/
+downloads/
+workspace/
+
+# Android AOSP specific (if built out-of-tree somehow)
+out/
