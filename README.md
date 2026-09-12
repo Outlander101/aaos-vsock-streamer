@@ -4,7 +4,7 @@ This repository provides the complete source code and instructions to relay **FR
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 The solution uses a 3-tier architecture to efficiently pass video frames across VM boundaries using `vhost-vsock`.
 
@@ -42,7 +42,7 @@ flowchart TD
 
 ---
 
-## 📦 Message Formatting (FRAM Protocol)
+## Message Formatting (FRAM Protocol)
 
 Data sent over the VSOCK connection uses a custom **FRAM protocol**. Every video frame (or configuration data) is prefixed with a 16-byte binary header followed immediately by the H.264 payload.
 
@@ -60,7 +60,7 @@ Data sent over the VSOCK connection uses a custom **FRAM protocol**. Every video
 
 ---
 
-## 🚀 Integration Guide
+## Integration Guide
 
 ### 1. AAOS (Sender)
 
@@ -112,7 +112,7 @@ cmake --build . -j
 
 ---
 
-## 🔄 Decoupling AGL: Using a Custom VM
+## Decoupling AGL: Using a Custom VM
 
 Because the architecture relies on standard VSOCK and a well-defined **FRAM** protocol, the AGL VM is **not strictly required**. You can easily replace the AGL target with any other Linux VM (e.g., Ubuntu, Yocto, Buildroot) to render the Dynamic Rear View Camera (DRC) or IVI stream.
 
