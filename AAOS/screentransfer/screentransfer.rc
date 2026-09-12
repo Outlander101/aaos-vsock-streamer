@@ -1,0 +1,30 @@
+service screentransfer /system/bin/screentransfer
+    class main
+    user system
+    group graphics media audio inet
+    oneshot
+    disabled
+    writepid /dev/cpuset/system-background/tasks
+    seclabel u:r:screentransfer:s0
+
+# Start when all dependencies are ready
+on property:sys.boot_completed=1 && property:init.svc.surfaceflinger=running
+    # Wait 5 seconds after boot complete
+    exec - system system -- /system/bin/sleep 5
+    start screentransfer
+
+# On service stop
+on property:init.svc.screentransfer=stopped
+    # Log the crash
+    exec - system log -- /system/bin/log -t screentransfer "Service stopped (restart in 5s)"
+
+# On restart
+on property:init.svc.screentransfer=restarting
+    # Log restart
+    exec - system log -- /system/bin/log -t screentransfer "Service restarting"
+    # Wait 5 seconds before restart
+    exec - system system -- /system/bin/sleep 5
+
+# When restart limit exceeded
+on property:init.svc.screentransfer=failed
+    exec - system log -- /system/bin/log -t screentransfer "Service failed after 4 restarts - giving up"

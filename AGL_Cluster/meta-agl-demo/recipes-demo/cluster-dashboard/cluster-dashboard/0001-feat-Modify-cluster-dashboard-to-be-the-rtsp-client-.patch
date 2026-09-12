@@ -1,0 +1,110 @@
+From 8184308c04ee65cb448f3823938c03140f06df5b Mon Sep 17 00:00:00 2001
+From: alenk <alenk@kpit.com>
+Date: Thu, 5 Mar 2026 13:40:02 +0530
+Subject: [PATCH] feat: Modify cluster-dashboard to be the rtsp client for
+ rendering frames
+
+This commit contains:
+- RTSP video frame logic
+- Restart and reconnection logic
+---
+ app/cluster-dashboard.qml | 70 +++++++++++++++++++++++++++++----------
+ 1 file changed, 53 insertions(+), 17 deletions(-)
+
+diff --git a/app/cluster-dashboard.qml b/app/cluster-dashboard.qml
+index b490837..69d1d1b 100644
+--- a/app/cluster-dashboard.qml
++++ b/app/cluster-dashboard.qml
+@@ -56,6 +56,7 @@
+  *       has been adopted.
+  */
+ 
++import QtMultimedia
+ import QtQuick 2.2
+ import QtQuick.Window 2.1
+ import QtQuick.Controls 2.0
+@@ -436,29 +437,64 @@ ApplicationWindow {
+ 
+     Rectangle {
+         id: frame
+-        x: 640
+-        y: 180
+-        width: 640
+-        height: 720
+-
++        x: 700;
++        y: 210
++        width: 870;
++        height: width * 9 / 16
++        z: 10
++        clip: true
+         color: "black"
+         border.width: 4
+         border.color: "grey"
+ 
+-        Image {
+-            source: './images/Utility_Logo_Grey-01.svg'
+-            x: (parent.width - width) / 2
+-            y: (parent.height - height) / 2
+-            width: parent.width / 2
+-            height: width
++        VideoOutput {
++            id: mapVideo
++            anchors.fill: parent
++            fillMode: VideoOutput.PreserveAspectFit
++            z: 1
++        }
++
++        Rectangle {
++            anchors.fill: parent
++            color: "transparent"
++            border.width: 2
++            border.color: "red"
++            z: 2
+         }
+     }
+ 
+-    Image {
+-        source: './images/agl_title_793x211.png'
+-        x: (parent.width - width) / 2
+-        y: 940
+-        width: 376
+-        height: 100
++    MediaPlayer {
++        id: mapPlayer
++        videoOutput: mapVideo
++        source: "rtsp://127.0.0.1:8554/test"
++        autoPlay: true
++
++        property int retryMs: 1000
++
++        onErrorChanged: {
++            console.log("RTSP error:", error, errorString)
++            reconnectTimer.interval = retryMs
++            reconnectTimer.restart()
++            retryMs = Math.min(retryMs * 2, 10000)
++        }
++
++        onPlaybackStateChanged: {
++            // If it starts playing, reset backoff
++            if (playbackState === MediaPlayer.PlayingState) {
++                retryMs = 1000
++            }
++        }
++    }
++
++    Timer {
++        id: reconnectTimer
++        repeat: false
++        interval: 1000
++        onTriggered: {
++            mapPlayer.stop()
++            mapPlayer.source = ""
++            mapPlayer.source = "rtsp://127.0.0.1:8554/test"
++            mapPlayer.play()
++        }
+     }
+ }
+-- 
+2.34.1
+

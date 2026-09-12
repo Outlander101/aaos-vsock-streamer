@@ -1,0 +1,53 @@
+package {
+    // See: http://go/android-license-faq
+    // A large-scale-change added 'default_applicable_licenses' to import
+    // all of the 'license_kinds' from "frameworks_av_license"
+    // to get the below license kinds:
+    //   SPDX-license-identifier-Apache-2.0
+    default_applicable_licenses: ["frameworks_av_license"],
+}
+
+cc_binary {
+    name: "screentransfer",
+
+    srcs: [
+        "screentransfer.cpp",
+        "VsockUtils.cpp",
+    ],
+
+    header_libs: [
+        "libmediadrm_headers",
+        "libmediametrics_headers",
+    ],
+
+    shared_libs: [
+        "libstagefright",
+        "libmedia",
+        "libmedia_omx",
+        "libutils",
+        "libbase",
+        "libbinder",
+        "libstagefright_foundation",
+        "libui",
+        "libgui",
+        "libcutils",
+        "liblog",
+    ],
+
+    cflags: [
+        "-Werror",
+        "-Wall",
+        "-Wno-multichar",
+    ],
+
+    // Include init.rc
+    init_rc: ["screentransfer.rc"],
+}
+
+cc_test {
+    name: "screentransfer_test",
+    srcs: ["tests/src/screentransfer_test.cpp"],
+    cflags: ["-DUNIT_TEST_BUILD"],
+    static_libs: ["libgtest", "libgtest_main"],
+    shared_libs: ["libutils", "liblog"],
+}

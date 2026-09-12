@@ -1,0 +1,14 @@
+[Unit]
+Description=VSOCK FRAM -> RTSP bridge (Android screentransfer)
+After=network.target
+
+[Service]
+Type=simple
+Environment=GST_DEBUG_NO_COLOR=1
+Environment=GST_DEBUG=rtsp*:4,rtspserver*:4,rtspmedia*:4,appsrc:4,h264parse:3,rtph264pay:3
+ExecStart=/usr/bin/vsock-rtsp-fram-bridge --port 5000 --rtsp-port 8554 --mount /test --verbose
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
