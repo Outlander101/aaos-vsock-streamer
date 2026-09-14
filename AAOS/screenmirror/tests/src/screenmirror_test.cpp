@@ -1,7 +1,7 @@
 /*
- * screentransfer_test.cpp
+ * screenmirror_test.cpp
  *
- * Unit tests for screentransfer.cpp.
+ * Unit tests for screenmirror.cpp.
  *
  */
 
@@ -43,7 +43,7 @@ static bool writeFully(int fd, const void* buf, size_t n) {
 #endif
 
 // Verbatim copies of every pure function under test.
-// These must be kept byte-for-byte identical to screentransfer.cpp.
+// These must be kept byte-for-byte identical to screenmirror.cpp.
 
 // Constants
 static constexpr uint32_t kFrameFlagKeyframe = 0x01u;

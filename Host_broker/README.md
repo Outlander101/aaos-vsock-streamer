@@ -22,7 +22,7 @@ Once both ends are connected, the broker:
 
 ## Project Structure
 
-    vsock_fram_broker/
+    vsock_screenmirror_broker/
       CMakeLists.txt
       include/
         broker.hpp
@@ -77,7 +77,7 @@ The broker never modifies the header or payload - bytes are forwarded as-is.
 ### Native Build (x86_64 or aarch64)
 
 ```sh
-cd vsock_fram_broker
+cd vsock_screenmirror_broker
 mkdir build && cd build
 
 cmake -DBUILD_TESTS=ON ..
@@ -95,7 +95,7 @@ cmake --build . -j
 ### Typical Run (AAOS CID = 3)
 
 ```sh
-cd vsock_fram_broker/build
+cd vsock_screenmirror_broker/build
 
 ./host_broker \
   --host-listen-port 5000 \
@@ -156,7 +156,7 @@ sudo apt-get install -y g++-aarch64-linux-gnu
 ### Build using Toolchain
 
 ```sh
-cd vsock_fram_broker
+cd vsock_screenmirror_broker
 mkdir build-arm && cd build-arm
 
 cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-aarch64.cmake -DBUILD_TESTS=OFF ..

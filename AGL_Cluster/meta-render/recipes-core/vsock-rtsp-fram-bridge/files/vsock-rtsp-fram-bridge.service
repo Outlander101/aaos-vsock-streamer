@@ -1,5 +1,5 @@
 [Unit]
-Description=VSOCK FRAM -> RTSP bridge (Android screentransfer)
+Description=VSOCK FRAM -> RTSP bridge (Android screenmirror)
 After=network.target
 
 [Service]

@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace screentransfer {
+namespace screenmirror {
 
 class VsockUtils {
  public:
@@ -54,6 +54,6 @@ class VsockUtils {
   static bool readFully(int fd, void* buf, size_t size);
 };
 
-}  // namespace screentransfer
+}  // namespace screenmirror
 
 #endif  // VSOCK_UTILS_H

@@ -1,6 +1,6 @@
-# IVI-Meter Interface (AAOS to AGL via VSOCK)
+# aaos vsock streamer
 
-This repository provides the complete source code and instructions to relay **FRAM-framed H.264 video** from an **Android Automotive OS (AAOS)** instance (IVI) to an **Automotive Grade Linux (AGL)** Cluster over **VSOCK**.
+This repository provides the complete source code and instructions to relay **custom framed H.264 video** from an **Android Automotive OS (AAOS)** instance to an **Automotive Grade Linux (AGL)** over **VSOCK**.
 
 ---
 
@@ -11,7 +11,7 @@ The solution uses a 3-tier architecture to efficiently pass video frames across 
 ```mermaid
 flowchart TD
     subgraph AAOS_VM ["AAOS VM (Guest 1)"]
-        A[SurfaceFlinger<br>Display 1] -->|Raw Video| B[screentransfer<br>Native Service]
+        A[SurfaceFlinger<br>Display 1] -->|Raw Video| B[screenmirror<br>Native Service]
         B -->|Encodes H.264| C[FRAM Wrapper]
         C -->|VSOCK Stream| D((VSOCK Interface))
     end
@@ -30,7 +30,7 @@ flowchart TD
 
 ### Flow Breakdown
 1. **Data Flow**: 
-   - `screentransfer` captures the UI from SurfaceFlinger on AAOS.
+   - `screenmirror` captures the UI from SurfaceFlinger on AAOS.
    - It hardware-encodes the frames into H.264 (Annex-B).
    - Each frame is prefixed with a custom 16-byte **FRAM** header.
    - The packet is written to a VSOCK file descriptor connected to the Host Broker.
@@ -64,25 +64,24 @@ Data sent over the VSOCK connection uses a custom **FRAM protocol**. Every video
 
 ### 1. AAOS (Sender)
 
-The `device` configurations are not included in this repository. You must integrate the `screentransfer` framework code into your own AAOS device tree.
+The `device` configurations are not included in this repository. You must integrate the `screenmirror` framework code into your own AAOS device tree.
 
 **Step 1: Copy Source Code**
-Copy the `AAOS/screentransfer` directory to `frameworks/av/cmds/screentransfer` in your AOSP/AAOS source tree.
+Copy the `AAOS/screenmirror` directory to `frameworks/av/cmds/screenmirror` in your AOSP/AAOS source tree.
 
 **Step 2: Update SEPolicy**
 Update your device's `BoardConfig.mk` (e.g., `device/<vendor>/<product>/BoardConfig.mk`) to include the sepolicy for the native service:
 ```make
-# Include screentransfer policy from frameworks
+# Include screenmirror policy from frameworks
 BOARD_SEPOLICY_DIRS += \
-    frameworks/av/cmds/screentransfer/sepolicy
+    frameworks/av/cmds/screenmirror/sepolicy
 ```
 
 **Step 3: Include Packages in Build**
 Update your device's `device.mk` (or product makefile) to include the binaries:
 ```make
-# frameworks/av/cmds/screentransfer
-PRODUCT_PACKAGES += screentransfer \
-                    screentransfer_test
+PRODUCT_PACKAGES += screenmirror \
+                    screenmirror_test
 ```
 
 **Step 4: Build AAOS**
@@ -97,7 +96,7 @@ m -j$(nproc)
 The host broker runs on the hypervisor/host machine to route VSOCK traffic.
 
 ```bash
-cd Host_broker/vsock_fram_broker
+cd Host_broker/vsock_screenmirror_broker
 mkdir build && cd build
 cmake ..
 cmake --build . -j
@@ -108,7 +107,7 @@ cmake --build . -j
 
 1. Add the `meta-render` layer from `AGL_Cluster/meta-render` to your Yocto build.
 2. Enable the service in your `local.conf` (see `AGL_Cluster/local.conf.sample`).
-3. Boot the AGL VM. The `vsock-rtsp-fram-bridge` daemon will automatically start on boot and listen on `rtsp://127.0.0.1:8554/test`.
+3. Boot the AGL VM. The `vsock-mirror-bridge` daemon will automatically start on boot and listen on `rtsp://127.0.0.1:8554/test`.
 
 ---
 

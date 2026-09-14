@@ -1,5 +1,5 @@
 # Overview
-ScreenTransfer is a native Android userspace binary for low-latency H.264 streaming of an Android display over AF_VSOCK.    
+ScreenMirror is a native Android userspace binary for low-latency H.264 streaming of an Android display over AF_VSOCK.    
 It:    
 1. Mirrors a physical Android display (e.g., Cluster / Display1)  
 2. Encodes frames using MediaCodec (H.264 / AVC)  
@@ -15,7 +15,7 @@ It:
 SurfaceFlinger -> Virtual Display Mirror -> MediaCodec (H.264 Encoder) ->    
 Annex-B Access Units -> FRAM framing protocol -> AF_VSOCK (CID:PORT) -> Host Broker
 ```
-- The encoder remains alive across vsock reconnects. If the remote side restarts, ScreenTransfer reconnects automatically.
+- The encoder remains alive across vsock reconnects. If the remote side restarts, ScreenMirror reconnects automatically.
 
 ---
 
@@ -74,11 +74,11 @@ By default:
 ## Build Instructions (AOSP)
 This binary is intended to be built inside Android source tree.
 1. Place Source
-frameworks/av/cmds/screentransfer/
+frameworks/av/cmds/screenmirror/
 2. Ensure you have:
 ``` bash
-screentransfer.cpp
-screentransfer.h
+screenmirror.cpp
+screenmirror.h
 VsockUtils.h
 Android.bp
 ```
@@ -86,9 +86,9 @@ Android.bp
 ``` bash
 source build/envsetup.sh
 lunch <target>
-m screentransfer
+m screenmirror
 Output:
-out/target/product/<device>/system/bin/screentransfer
+out/target/product/<device>/system/bin/screenmirror
 ```
 
 ### Runtime Requirements
@@ -105,7 +105,7 @@ Display active (Cluster must not be INVALID_LAYER_STACK)
 Must listen on vsock CID:PORT
 Must parse FRAM protocol
 Must accept Annex-B H.264
-Running ScreenTransfer
+Running ScreenMirror
 ```
 
 ---
@@ -113,11 +113,11 @@ Running ScreenTransfer
 ## Usage
 1. Basic:
 ``` bash
-adb shell screentransfer --vsock 2:22345
+adb shell screenmirror --vsock 2:22345
 ```
 2. Example with resolution and bitrate:
 ``` bash
-adb shell screentransfer \
+adb shell screenmirror \
     --size 640x480 \
     --bit-rate 1M \
     --vsock 2:22345

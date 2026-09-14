@@ -1,10 +1,10 @@
 /*
- * screentransfer.h - Public interface and configuration structs
+ * screenmirror.h - Public interface and configuration structs
  *
  */
 
-#ifndef SCREENTRANSFER_H
-#define SCREENTRANSFER_H
+#ifndef SCREENMIRROR_H
+#define SCREENMIRROR_H
 
 #include <media/stagefright/foundation/AString.h>
 
@@ -12,7 +12,7 @@
 #include <optional>
 #include <string>
 
-namespace screentransfer {
+namespace screenmirror {
 using android::AString;
 
 // Version information
@@ -65,6 +65,6 @@ struct RuntimeConfig {
   AString codecName;  // Force codec (empty = auto)
 };
 
-}  // namespace screentransfer
+}  // namespace screenmirror
 
-#endif  // SCREENTRANSFER_H
+#endif  // SCREENMIRROR_H

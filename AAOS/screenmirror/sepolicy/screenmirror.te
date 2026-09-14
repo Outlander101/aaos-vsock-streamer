@@ -1,0 +1,105 @@
+type screenmirror, domain, coredomain;
+type screenmirror_exec, system_file_type, exec_type, file_type;
+
+init_daemon_domain(screenmirror)
+
+# Allow creating and managing vsock sockets for streaming
+allow screenmirror self:vsock_socket {
+    create          
+    bind
+    listen
+    accept
+    connect
+    read
+    write
+    getattr
+    getopt
+    setopt
+    shutdown
+};
+
+# Allow searching /dev directory to locate device nodes
+allow screenmirror device:dir { search };
+
+# Grant network capabilities for vsock socket operations
+allow screenmirror self:capability { net_raw net_admin };
+
+# Allow unix domain sockets for binder and logging
+allow screenmirror self:unix_stream_socket { create connect read write };
+
+# Enable binder IPC mechanism
+binder_use(screenmirror)
+
+# Allow calling system services via binder
+binder_call(screenmirror, servicemanager)
+binder_call(screenmirror, surfaceflinger)
+binder_call(screenmirror, system_server)
+binder_call(screenmirror, mediaserver)
+
+# Allow receiving binder callbacks from services
+binder_call(mediaserver, screenmirror)
+binder_call(surfaceflinger, screenmirror)
+
+# Allow finding and binding to system services
+allow screenmirror surfaceflinger_service:service_manager find;
+allow screenmirror mediaserver_service:service_manager find;
+allow screenmirror package_native_service:service_manager find;
+
+# Graphics Allocator HAL
+hal_client_domain(screenmirror, hal_graphics_allocator)
+
+# Codec2 HAL
+hal_client_domain(screenmirror, hal_codec2)
+
+# GPU device directory (/dev/dri/)
+allow screenmirror gpu_device:dir { search read open getattr };
+
+# GPU device nodes (/dev/dri/card*, /dev/dri/renderD*)
+allow screenmirror gpu_device:chr_file { read write open ioctl getattr map };
+
+# Graphics device directory (/dev/graphics/)
+allow screenmirror graphics_device:dir { search read open getattr };
+
+# Graphics device nodes - for graphics operations
+allow screenmirror graphics_device:chr_file { read write open ioctl getattr map };
+
+# Video device directory (/dev/video*)
+allow screenmirror video_device:dir { search };
+
+# Video device nodes
+allow screenmirror video_device:chr_file { read write open ioctl getattr };
+
+# ION allocator
+allow screenmirror ion_device:chr_file { read write open ioctl getattr };
+
+# DMA-BUF system heap
+allow screenmirror dmabuf_system_heap_device:chr_file {
+    getattr         
+    open
+    read
+    write
+    ioctl
+    map
+};
+
+# System files directory
+allow screenmirror system_file:dir { search read open getattr };
+allow screenmirror system_file:file { read open getattr execute map };
+
+# System libraries directory
+allow screenmirror system_lib_file:dir  { search read open getattr };
+allow screenmirror system_lib_file:file { read open getattr execute map };
+
+# Tmpfs directory
+allow screenmirror tmpfs:dir  { search read open getattr };
+allow screenmirror tmpfs:file { read write open getattr map };
+
+# Self process signal handling
+allow screenmirror self:process { signal sigchld sigkill sigstop };
+allow screenmirror self:process { setsched setpgid };
+
+# Allow connecting to logd for Android logging (logcat)
+allow screenmirror logd:unix_stream_socket { connectto };
+
+# Sysfs directory
+allow screenmirror sysfs:dir { search read open getattr };

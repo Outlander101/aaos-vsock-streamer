@@ -1,5 +1,5 @@
 /*
- * VsockUtils.h - VSOCK utility implementations for screentransfer
+ * VsockUtils.h - VSOCK utility implementations for screenmirror
  *
  * Provides helper functions for:
  *   - Creating listening sockets
@@ -19,7 +19,7 @@
 #define LOG_TAG "VsockUtils"
 #include <utils/Log.h>
 
-namespace screentransfer {
+namespace screenmirror {
 
 int VsockUtils::createVsockListener(uint32_t port) {
   int listenFd = socket(AF_VSOCK, SOCK_STREAM, 0);
@@ -113,4 +113,4 @@ bool VsockUtils::readFully(int fd, void* buf, size_t size) {
   return true;
 }
 
-}  // namespace screentransfer
+}  // namespace screenmirror

@@ -8,10 +8,10 @@ package {
 }
 
 cc_binary {
-    name: "screentransfer",
+    name: "screenmirror",
 
     srcs: [
-        "screentransfer.cpp",
+        "screenmirror.cpp",
         "VsockUtils.cpp",
     ],
 
@@ -41,12 +41,12 @@ cc_binary {
     ],
 
     // Include init.rc
-    init_rc: ["screentransfer.rc"],
+    init_rc: ["screenmirror.rc"],
 }
 
 cc_test {
-    name: "screentransfer_test",
-    srcs: ["tests/src/screentransfer_test.cpp"],
+    name: "screenmirror_test",
+    srcs: ["tests/src/screenmirror_test.cpp"],
     cflags: ["-DUNIT_TEST_BUILD"],
     static_libs: ["libgtest", "libgtest_main"],
     shared_libs: ["libutils", "liblog"],

@@ -1,9 +1,9 @@
 /*
- * screentransfer.cpp - H.264 streaming over VSOCK
+ * screenmirror.cpp - H.264 streaming over VSOCK
  *
  */
 
-#include "screentransfer.h"
+#include "screenmirror.h"
 
 #include <fcntl.h>
 #include <getopt.h>
@@ -22,7 +22,7 @@
 
 #include "VsockUtils.h"
 
-#define LOG_TAG "ScreenTransfer"
+#define LOG_TAG "ScreenMirror"
 #define ATRACE_TAG ATRACE_TAG_GRAPHICS
 #include <binder/IPCThreadState.h>
 #include <gui/ISurfaceComposer.h>
@@ -70,7 +70,7 @@ using android::ui::DisplayMode;
 
 namespace ui = android::ui;
 
-using namespace screentransfer;
+using namespace screenmirror;
 
 // Global configuration (initialized from command-line arguments)
 EncoderConfig gEncoderConfig;
@@ -291,7 +291,7 @@ static status_t prepareEncoder(float displayFps, sp<MediaCodec>* pCodec,
   format->setInt32(KEY_MAX_B_FRAMES, 0);
 
   sp<ALooper> looper = new ALooper;
-  looper->setName("screentransfer_looper");
+  looper->setName("screenmirror_looper");
   looper->start();
 
   sp<MediaCodec> codec;
@@ -424,7 +424,7 @@ static status_t prepareVirtualDisplay(
     const sp<IGraphicBufferProducer>& bufferProducer,
     sp<IBinder>* pDisplayHandle, sp<SurfaceControl>* mirrorRoot) {
   sp<IBinder> dpy =
-      SurfaceComposerClient::createDisplay(String8("ScreenTransfer"), false);
+      SurfaceComposerClient::createDisplay(String8("ScreenMirror"), false);
 
   SurfaceComposerClient::Transaction t;
   t.setDisplaySurface(dpy, bufferProducer);
@@ -1283,7 +1283,7 @@ static status_t parseValueWithUnit(const char* str, uint32_t* pValue) {
  */
 static void usage() {
   fprintf(stderr,
-          "screentransfer - Broker-controlled H.264 vsock streaming\n"
+          "screenmirror - Broker-controlled H.264 vsock streaming\n"
           "\n"
           "Defaults: %ux%u @ 60fps, %.2fMbps, GOP=2s\n"
           "\n"
